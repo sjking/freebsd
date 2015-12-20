@@ -22,6 +22,15 @@ require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
 action :create do
+  
+  directory ::File.dirname(new_resource.full_path) do
+    owner 'root'
+    group 'wheel'
+    mode '0755'
+    recursive true
+    action :nothing
+  end.run_action(:create)
+  
   if new_resource.source
     res = template new_resource.full_path do
       mode '0644'
@@ -51,6 +60,7 @@ action :create do
       action :nothing
     end
   end
+
   res.run_action(:create)
   new_resource.updated_by_last_action(res.updated_by_last_action?)
 end
