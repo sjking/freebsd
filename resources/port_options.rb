@@ -21,6 +21,7 @@ actions :create
 default_action :create
 
 attribute :name, kind_of: String, name_attribute: true
+attribute :port_group, kind_of: String
 attribute :source, kind_of: String
 attribute :options, kind_of: Hash
 attribute :full_path, kind_of: String
@@ -30,5 +31,9 @@ attribute :file_writer, kind_of: String
 
 def initialize(*args)
   super
-  @full_path = "/var/db/ports/#{name}/options"
+	if not port_group.nil?
+		@full_path = "/var/db/ports/#{port_group}_#{name}/options" # don't think this works
+	else
+		@full_path = "/var/db/ports/#{name}/options"
+	end
 end

@@ -22,7 +22,7 @@ require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
 action :create do
-  
+
   directory ::File.dirname(new_resource.full_path) do
     owner 'root'
     group 'wheel'
@@ -50,8 +50,14 @@ action :create do
     options.merge!(@current_resource.current_options)
     options.merge!(new_resource.options)
 
-    options.each_pair do |k, v|
-      output << "#{v ? 'WITH' : 'WITHOUT'}_#{k}=true"
+		if node['platform_version'] =~ /10.2/
+			options.each_pair do |k, v|
+				output << "#{new_resource.port_group}_#{new_resource.name}_#{v ? 'SET' : 'UNSET'}=#{k}"
+			end
+		else
+			options.each_pair do |k, v|
+				output << "#{v ? 'WITH' : 'WITHOUT'}_#{k}=true"
+			end
     end
 
     res = file new_resource.full_path do
